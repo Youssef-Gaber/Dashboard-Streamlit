@@ -66,8 +66,8 @@ class TimeSeriesOOP:
                                    style=".-")
         plt.show( )
 
-#using the class
-time_series_visualiser = TimeSeriesOOP(r'C:\Users\Admin\OOP\TimeSeries\dataset.csv',
-date_column='LastUpdated', index_column='LastUpdated')
-col_of_interest = 'Occupancy'
-time_series_visualiser.draw_all(column_of_interest=col_of_interest)       
+# #using the class
+# time_series_visualiser = TimeSeriesOOP(r'C:\Users\Admin\OOP\TimeSeries\dataset.csv',
+# date_column='LastUpdated', index_column='LastUpdated')
+# col_of_interest = 'Occupancy'
+# time_series_visualiser.draw_all(column_of_interest=col_of_interest)       
