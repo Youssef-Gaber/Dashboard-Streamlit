@@ -381,6 +381,8 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
+                   st.write('Actual') 
+                   linePlot_Out_recogn(current_df, selected_column) 
                    linePlot_Out_recogn(linear_df, selected_column)
                 
                 if st.button("Save liner results"):
@@ -411,6 +413,8 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
+                   st.write('Actual') 
+                   linePlot_Out_recogn(current_df, selected_column)  
                    linePlot_Out_recogn(Cubic_df, selected_column)
                 
                 if st.button("Save cubic results"):
@@ -441,6 +445,9 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
+                   st.write('Actual') 
+                   linePlot_Out_recogn(current_df, selected_column) 
+                   st.write('Forward Fill') 
                    linePlot_Out_recogn(df_ffill, selected_column)
                 
                 if st.button("Save Forward Fill results"):
@@ -471,6 +478,8 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
+                   st.write('Actual') 
+                   linePlot_Out_recogn(current_df, selected_column) 
                    linePlot_Out_recogn(df_bfill, selected_column)
                 
                 if st.button("Save Backward Fill results"):
