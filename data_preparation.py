@@ -313,7 +313,7 @@ def data_preparation_run(data_obj):
 
     if dp_method == 'Interpolation':
         interpolation_radio = st.radio(label = 'Interpolation',
-                             options = ['Linear','Cubic','All'])
+                             options = ['Linear','Cubic', 'Forward Fill', 'Backward Fill','All'])
         if interpolation_radio == 'All':
             
             with st.container():
@@ -356,14 +356,130 @@ def data_preparation_run(data_obj):
                     #Histogram(interpolation_all.draw_all().reset_index(drop=True), selected_column)
 
                 #current_df = rm_outlier.reset_index(drop=True)
-                if st.button("Save linear"):
-                    current_df = interpolation_all.save_liner()
-                    #current_df.to_csv("LinerInterpolation.csv", index=False)        
+    
+        if interpolation_radio == 'Linear':
+            
+            with st.container():
+                st.subheader('Linear interpolation')
 
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    linear_df = interpolation_all.make_interpolation_liner(selected_column) 
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    #bp = st.button("Boxplot")
+                    #hist = st.button("Histogram")
+                # with cc3:
+                #     st.write(" ")
+                #     st.write(" ")
+                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                   linePlot_Out_recogn(linear_df, selected_column)
+                
+                if st.button("Save liner results"):
+                    current_df = linear_df.reset_index(drop=True)
+                    current_df.to_csv("linear_data.csv", index=False)  
+        
+        if interpolation_radio == 'Cubic':
+            
+            with st.container():
+                st.subheader('Cubic interpolation')
+
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    Cubic_df = interpolation_all.make_interpolation_cubic(selected_column) 
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    #bp = st.button("Boxplot")
+                    #hist = st.button("Histogram")
+                # with cc3:
+                #     st.write(" ")
+                #     st.write(" ")
+                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                   linePlot_Out_recogn(Cubic_df, selected_column)
+                
+                if st.button("Save cubic results"):
+                    current_df = Cubic_df.reset_index(drop=True)
+                    current_df.to_csv("Cubic_data.csv", index=False)   
+        
+        if interpolation_radio == 'Forward Fill':
+            
+            with st.container():
+                st.subheader('Forward Fill interpolation')
+
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    df_ffill = interpolation_all.int_df_ffill() 
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    #bp = st.button("Boxplot")
+                    #hist = st.button("Histogram")
+                # with cc3:
+                #     st.write(" ")
+                #     st.write(" ")
+                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                   linePlot_Out_recogn(df_ffill, selected_column)
+                
+                if st.button("Save remove outlier results"):
+                    current_df = df_ffill.reset_index(drop=True)
+                    current_df.to_csv("fforward_data.csv", index=False) 
+        
+        if interpolation_radio == 'Backward Fill':
+            
+            with st.container():
+                st.subheader('Backward Fill interpolation')
+
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    df_bfill = interpolation_all.int_df_bfilll() 
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    #bp = st.button("Boxplot")
+                    #hist = st.button("Histogram")
+                # with cc3:
+                #     st.write(" ")
+                #     st.write(" ")
+                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                   linePlot_Out_recogn(df_bfill, selected_column)
+                
+                if st.button("Save remove outlier results"):
+                    current_df = df_bfill.reset_index(drop=True)
+                    current_df.to_csv("backward_data.csv", index=False)                                                
     with col2:
         st.subheader('Current dataframe')
-        st.dataframe(current_df)
-        st.write(current_df.shape)
+        st.dataframe(current_df) 
+        st.write(current_df.shape) 
 
     with col3:
         st.subheader('Resulting dataframe')
@@ -382,8 +498,18 @@ def data_preparation_run(data_obj):
         if dp_method == 'Smoothing' and smooth_radio == 'Moving average':
             st.dataframe(moving_ave.reset_index(drop=True))
             st.write(moving_ave.shape)
-        if dp_method == 'Interpolation' and  interpolation_radio == 'All interpolation':
-            st.dataframe(interpolation_all.reset_index(drop=True))
-            st.write(interpolation_all.shape)    
+        if dp_method == 'Interpolation' and  interpolation_radio == 'Linear':
+            st.dataframe(linear_df.reset_index(drop=True))
+            st.write(linear_df.shape)
+        if dp_method == 'Interpolation' and  interpolation_radio == 'Cubic':
+            st.dataframe(Cubic_df.reset_index(drop=True))
+            st.write(Cubic_df.shape)
+        if dp_method == 'Interpolation' and  interpolation_radio == 'Forward Fill':
+            st.dataframe(df_ffill.reset_index(drop=True))
+            st.write(df_ffill.shape)
+        if dp_method == 'Interpolation' and  interpolation_radio == 'Backward Fill':
+            st.dataframe(df_bfill.reset_index(drop=True))
+            st.write(Cubic_df.shape)          
+                       
             
 
