@@ -443,7 +443,7 @@ def data_preparation_run(data_obj):
                 if plot_basic:
                    linePlot_Out_recogn(df_ffill, selected_column)
                 
-                if st.button("Save remove outlier results"):
+                if st.button("Save Forward Fill results"):
                     current_df = df_ffill.reset_index(drop=True)
                     current_df.to_csv("fforward_data.csv", index=False) 
         
@@ -457,7 +457,7 @@ def data_preparation_run(data_obj):
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
                     interpolation_all = TimeSeriesOOP(current_df, selected_column)
-                    df_bfill = interpolation_all.int_df_bfilll() 
+                    df_bfill = interpolation_all.int_df_bfill() 
                     
                 with cc2:
                     st.write(" ")
@@ -473,7 +473,7 @@ def data_preparation_run(data_obj):
                 if plot_basic:
                    linePlot_Out_recogn(df_bfill, selected_column)
                 
-                if st.button("Save remove outlier results"):
+                if st.button("Save Backward Fill results"):
                     current_df = df_bfill.reset_index(drop=True)
                     current_df.to_csv("backward_data.csv", index=False)                                                
     with col2:
@@ -509,7 +509,7 @@ def data_preparation_run(data_obj):
             st.write(df_ffill.shape)
         if dp_method == 'Interpolation' and  interpolation_radio == 'Backward Fill':
             st.dataframe(df_bfill.reset_index(drop=True))
-            st.write(Cubic_df.shape)          
+            st.write(df_bfill.shape)          
                        
             
 

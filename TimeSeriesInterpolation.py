@@ -29,7 +29,7 @@ class TimeSeriesOOP:
         # 4. Linear Interpolation ------------------
         self.df['rownum'] = np.arange(self.df.shape[0])  # df.shape[0]-gives number of row count
         df_nona = self.df.dropna(subset=[column_of_interest])  # df.dropna- Remove missing values.
-        f = interp1d(df_nona['rownum'], df_nona[column_of_interest])
+        f = interp1d(df_nona['rownum'], df_nona[column_of_interest], kind='linear')
         self.df['linear_fill'] = f(self.df['rownum'])
         return self.df
 
