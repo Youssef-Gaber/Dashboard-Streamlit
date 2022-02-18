@@ -89,7 +89,6 @@ def median_filter(dataframe, column, filter_length):
     return s
 
 
-
 def data_preparation_run(data_obj):
     st.header("DATA PREPARATION")
 
@@ -219,22 +218,21 @@ def data_preparation_run(data_obj):
                 if st.button("Save remove outlier results"):
                     current_df = z_outlier.reset_index(drop=True)
                     current_df.to_csv("Prepared Dataset.csv", index=False)
-
-    if dp_method == 'Interpolation':
-        interpolation_radio = st.radio(label = 'Interpolation',
-                             options = ['Linear','Cubic','All'])
-        if interpolation_radio == 'All':
+    if dp_method == 'Smoothing':
+        smooth_radio = st.radio(label = 'Smoothing',
+                             options = ['Median filter','Moving average','Savitzky Golay'])
+        if smooth_radio == 'Median filter':
             
             with st.container():
-                st.subheader('All interpolations')
+                st.subheader('Median filter')
 
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     filter_len = st.slider('Length of the window', 3, 7, 5, 2)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, date_column='LastUpdated', index_column='LastUpdated')
-                     
+                    median_filt = median_filter(current_df, selected_column, filter_len)
+                
                     
                 with cc2:
                     st.write(" ")
@@ -248,7 +246,7 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
-                    doubleLinePlot(data_obj.df, interpolation_all.reset_index(drop=True), selected_column)
+                    doubleLinePlot(data_obj.df, median_filt.reset_index(drop=True), selected_column)
                     # st.dataframe(median_filt)
                     # st.write(data_obj.df[selected_column].value_counts(ascending=False))
                     # st.write(median_filt[selected_column].value_counts(ascending=False))
@@ -259,15 +257,108 @@ def data_preparation_run(data_obj):
 
 
                 if bp:
-                    DoubleBoxPlot(data_obj.df, interpolation_all.reset_index(drop=True), selected_column)
+                    DoubleBoxPlot(data_obj.df, median_filt.reset_index(drop=True), selected_column)
 
                 if hist:
-                    Histogram(interpolation_all.reset_index(drop=True), selected_column)
+                    Histogram(median_filt.reset_index(drop=True), selected_column)
 
                 #current_df = rm_outlier.reset_index(drop=True)
                 if st.button("Save remove outlier results"):
-                    current_df = interpolation_all.reset_index(drop=True)
+                    current_df = median_filt.reset_index(drop=True)
                     current_df.to_csv("Prepared Dataset.csv", index=False)
+        if smooth_radio == 'Moving average':
+            with st.container():
+                st.subheader('Moving average')
+
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    filter_len = st.slider('Length of the window', 3, 7, 5, 2)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    # median_filt = median_filter(current_df, selected_column, filter_len)
+                    moving_ave = moving_average(current_df, selected_column, filter_len)
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    bp = st.button("Boxplot")
+                    hist = st.button("Histogram")
+                with cc3:
+                    st.write(" ")
+                    st.write(" ")
+                    st.warning(f'If applied, {current_df.shape[0]-moving_ave.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                    doubleLinePlot(data_obj.df, moving_ave.reset_index(drop=True), selected_column)
+                    # st.dataframe(median_filt)
+                    # st.write(data_obj.df[selected_column].value_counts(ascending=False))
+                    # st.write(median_filt[selected_column].value_counts(ascending=False))
+                    # st.write("Blah")
+                    # l = {'col1': medfilt(data_obj.df[selected_column], filter_len)}
+                    # lf = pd.DataFrame(data=l)
+                    # st.write(lf.value_counts(ascending=False))
+
+
+                if bp:
+                    DoubleBoxPlot(data_obj.df, moving_ave.reset_index(drop=True), selected_column)
+
+                if hist:
+                    Histogram(moving_ave.reset_index(drop=True), selected_column)
+
+                #current_df = rm_outlier.reset_index(drop=True)
+                if st.button("Save remove outlier results"):
+                    current_df = moving_ave.reset_index(drop=True)
+                    current_df.to_csv("Prepared Dataset.csv", index=False)
+
+    if dp_method == 'Interpolation':
+        interpolation_radio = st.radio(label = 'Interpolation',
+                             options = ['Linear','Cubic','All'])
+        if interpolation_radio == 'All':
+            
+            with st.container():
+                st.subheader('All interpolations')
+
+                cc1, cc2, cc3 = st.columns(3)
+                with cc1:
+                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    selected_column = st.selectbox("Select a column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    
+                    
+                with cc2:
+                    st.write(" ")
+                    st.write(" ")
+                    plot_basic = st.button('Plot')
+                    #bp = st.button("Boxplot")
+                    #hist = st.button("Histogram")
+                # with cc3:
+                #     st.write(" ")
+                #     st.write(" ")
+                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                if plot_basic:
+                    interpolation_all.draw_all(selected_column) 
+                    #doubleLinePlot(data_obj.df, interpolation_all.draw_all(selected_column), selected_column)
+                    # st.dataframe(median_filt)
+                    # st.write(data_obj.df[selected_column].value_counts(ascending=False))
+                    # st.write(median_filt[selected_column].value_counts(ascending=False))
+                    #st.write("Blah")
+                    # l = {'col1': medfilt(data_obj.df[selected_column], filter_len)}
+                    # lf = pd.DataFrame(data=l)
+                    # st.write(lf.value_counts(ascending=False))
+
+
+                #if bp:
+                    #DoubleBoxPlot(data_obj.df, interpolation_all.draw_all().reset_index(drop=True), selected_column)
+
+                #if hist:
+                    #Histogram(interpolation_all.draw_all().reset_index(drop=True), selected_column)
+
+                #current_df = rm_outlier.reset_index(drop=True)
+                if st.button("Save linear"):
+                    current_df = interpolation_all.save_liner()
+                    #current_df.to_csv("LinerInterpolation.csv", index=False)        
 
     with col2:
         st.subheader('Current dataframe')
