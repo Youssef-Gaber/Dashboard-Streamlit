@@ -13,6 +13,7 @@ class TimeSeriesOOP:
         current_df=current_df.set_index('LastUpdated')
         self.df = current_df
         self.process_dataframe()
+        
         #self.df_ffill = self.df.ffill( )  # df.ffill-pandas func to forward fill missing values
         #self.df_bfill = self.df.bfill( )  # df.ffill-pandas func to backward fill missing values
         
@@ -36,8 +37,8 @@ class TimeSeriesOOP:
     def make_interpolation_cubic(self, column_of_interest):
         # 5. Cubic Interpolation --------------------
         self.df['rownum'] = np.arange(self.df.shape[0]) 
-        df_nona = self.df.dropna(subset=[column_of_interest]) 
-        f2 = interp1d(df_nona['rownum'], df_nona[column_of_interest], kind='cubic')
+        df_nona1 = self.df.dropna(subset=[column_of_interest]) 
+        f2 = interp1d(df_nona1['rownum'], df_nona1[column_of_interest], kind='cubic')
         self.df['cubic_fill'] = f2(self.df['rownum'])
         return self.df
     

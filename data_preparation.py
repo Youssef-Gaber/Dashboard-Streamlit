@@ -8,8 +8,27 @@ import scipy.stats as stats
 from scipy.signal import medfilt
 from TimeSeriesInterpolation import TimeSeriesOOP
 
-def linePlot_Out_recogn(dataframe, column):
+
+def interpolation_subplot(initdf, dataframe, column, method):
+    error = 0
+    plt.rcParams.update({'xtick.bottom': False})
+    #fig, axes = plt.subplots(1, 1, sharex=True, figsize=(20, 20))
     fig = plt.figure(figsize=(10, 4))
+    if method=='cubic_fill' or method=='linear_fill':
+        #initdf[column].plot(title='Actual', ax=axes[0], label='Actual', color='green', style=".-")
+        dataframe[method].plot(title="{} (MSE: ".format(method) + str(error) + ")",  label='{}'.format(method),
+                                  color='deeppink',
+                                   style=".-")
+        st.pyplot(fig)                                                  
+    else:
+        #initdf[column].plot(title='Actual', ax=axes[0],  label='Actual', color='green', style=".-")
+        dataframe[column].plot(title="{} (MSE: ".format(method) + str(error) + ")", label='{}'.format(method),
+                                  color='deeppink',
+                                   style=".-")
+        st.pyplot(fig)        
+
+def linePlot_Out_recogn(dataframe, column):
+    fig = plt.figure(figsize=(20, 20))
     sns.lineplot(y = column, x = [i for i in range(len(dataframe[column]))], data = dataframe)
     st.pyplot(fig)
 
@@ -381,9 +400,7 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
-                   st.write('Actual') 
-                   linePlot_Out_recogn(current_df, selected_column) 
-                   linePlot_Out_recogn(linear_df, selected_column)
+                   interpolation_subplot(current_df, linear_df, selected_column, 'linear_fill')
                 
                 if st.button("Save liner results"):
                     current_df = linear_df.reset_index(drop=True)
@@ -412,10 +429,10 @@ def data_preparation_run(data_obj):
                 #     st.write(" ")
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
-                if plot_basic:
-                   st.write('Actual') 
-                   linePlot_Out_recogn(current_df, selected_column)  
-                   linePlot_Out_recogn(Cubic_df, selected_column)
+                if plot_basic: 
+                   interpolation_subplot(current_df, Cubic_df, selected_column, 'cubic_fill')
+                #    linePlot_Out_recogn(current_df, selected_column)  
+                #    linePlot_Out_recogn(Cubic_df, selected_column)
                 
                 if st.button("Save cubic results"):
                     current_df = Cubic_df.reset_index(drop=True)
@@ -445,10 +462,7 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
-                   st.write('Actual') 
-                   linePlot_Out_recogn(current_df, selected_column) 
-                   st.write('Forward Fill') 
-                   linePlot_Out_recogn(df_ffill, selected_column)
+                   interpolation_subplot(current_df, df_ffill, selected_column, 'Forward Fill')
                 
                 if st.button("Save Forward Fill results"):
                     current_df = df_ffill.reset_index(drop=True)
@@ -478,9 +492,8 @@ def data_preparation_run(data_obj):
                 #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
                 if plot_basic:
-                   st.write('Actual') 
-                   linePlot_Out_recogn(current_df, selected_column) 
-                   linePlot_Out_recogn(df_bfill, selected_column)
+                   #linePlot_Out_recogn(current_df, selected_column) 
+                   interpolation_subplot(current_df, df_bfill, selected_column, 'Backward Fill')
                 
                 if st.button("Save Backward Fill results"):
                     current_df = df_bfill.reset_index(drop=True)
