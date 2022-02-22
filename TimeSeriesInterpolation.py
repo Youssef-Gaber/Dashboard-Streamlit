@@ -9,8 +9,8 @@ import streamlit as st
 
 #defining class "TimeSeriesOOP"
 class TimeSeriesOOP:
-    def __init__(self, current_df, selected_column):
-        current_df=current_df.set_index('LastUpdated')
+    def __init__(self, current_df, selected_column, time_column):
+        current_df=current_df.set_index("{}".format(time_column))
         self.df = current_df
         self.process_dataframe()
         
@@ -19,6 +19,7 @@ class TimeSeriesOOP:
         
     def process_dataframe(self):  # make separate func if you need more processing
         self.df = self.df.resample('15min').mean( )
+        
     
     def int_df_ffill(self):
         return self.df.ffill()  
@@ -32,6 +33,7 @@ class TimeSeriesOOP:
         df_nona = self.df.dropna(subset=[column_of_interest])  # df.dropna- Remove missing values.
         f = interp1d(df_nona['rownum'], df_nona[column_of_interest], kind='linear')
         self.df['linear_fill'] = f(self.df['rownum'])
+        #self.df = self.df.dropna() 
         return self.df
 
     def make_interpolation_cubic(self, column_of_interest):

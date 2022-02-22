@@ -237,6 +237,7 @@ def data_preparation_run(data_obj):
                 if st.button("Save remove outlier results"):
                     current_df = z_outlier.reset_index(drop=True)
                     current_df.to_csv("Prepared Dataset.csv", index=False)
+                    
     if dp_method == 'Smoothing':
         smooth_radio = st.radio(label = 'Smoothing',
                              options = ['Median filter','Moving average','Savitzky Golay'])
@@ -252,7 +253,6 @@ def data_preparation_run(data_obj):
                     selected_column = st.selectbox("Select a column:", columns_list)
                     median_filt = median_filter(current_df, selected_column, filter_len)
                 
-                    
                 with cc2:
                     st.write(" ")
                     st.write(" ")
@@ -274,7 +274,6 @@ def data_preparation_run(data_obj):
                     # lf = pd.DataFrame(data=l)
                     # st.write(lf.value_counts(ascending=False))
 
-
                 if bp:
                     DoubleBoxPlot(data_obj.df, median_filt.reset_index(drop=True), selected_column)
 
@@ -285,6 +284,7 @@ def data_preparation_run(data_obj):
                 if st.button("Save remove outlier results"):
                     current_df = median_filt.reset_index(drop=True)
                     current_df.to_csv("Prepared Dataset.csv", index=False)
+
         if smooth_radio == 'Moving average':
             with st.container():
                 st.subheader('Moving average')
@@ -318,7 +318,6 @@ def data_preparation_run(data_obj):
                     # lf = pd.DataFrame(data=l)
                     # st.write(lf.value_counts(ascending=False))
 
-
                 if bp:
                     DoubleBoxPlot(data_obj.df, moving_ave.reset_index(drop=True), selected_column)
 
@@ -341,9 +340,9 @@ def data_preparation_run(data_obj):
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
-                    selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
-                    
+                    selected_column = st.selectbox("Select an interested column:", columns_list)
+                    time_column = st.selectbox("Select a time column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     
                 with cc2:
                     st.write(" ")
@@ -385,7 +384,8 @@ def data_preparation_run(data_obj):
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    time_column = st.selectbox("Select a time column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     linear_df = interpolation_all.make_interpolation_liner(selected_column) 
                     
                 with cc2:
@@ -403,7 +403,7 @@ def data_preparation_run(data_obj):
                    interpolation_subplot(current_df, linear_df, selected_column, 'linear_fill')
                 
                 if st.button("Save liner results"):
-                    current_df = linear_df.reset_index(drop=True)
+                    current_df = linear_df.reset_index()
                     current_df.to_csv("linear_data.csv", index=False)  
         
         if interpolation_radio == 'Cubic':
@@ -415,7 +415,8 @@ def data_preparation_run(data_obj):
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    time_column = st.selectbox("Select a time column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     Cubic_df = interpolation_all.make_interpolation_cubic(selected_column) 
                     
                 with cc2:
@@ -435,7 +436,7 @@ def data_preparation_run(data_obj):
                 #    linePlot_Out_recogn(Cubic_df, selected_column)
                 
                 if st.button("Save cubic results"):
-                    current_df = Cubic_df.reset_index(drop=True)
+                    current_df = Cubic_df.reset_index()
                     current_df.to_csv("Cubic_data.csv", index=False)   
         
         if interpolation_radio == 'Forward Fill':
@@ -447,7 +448,8 @@ def data_preparation_run(data_obj):
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    time_column = st.selectbox("Select a time column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     df_ffill = interpolation_all.int_df_ffill() 
                     
                 with cc2:
@@ -465,7 +467,7 @@ def data_preparation_run(data_obj):
                    interpolation_subplot(current_df, df_ffill, selected_column, 'Forward Fill')
                 
                 if st.button("Save Forward Fill results"):
-                    current_df = df_ffill.reset_index(drop=True)
+                    current_df = df_ffill.reset_index()
                     current_df.to_csv("fforward_data.csv", index=False) 
         
         if interpolation_radio == 'Backward Fill':
@@ -477,7 +479,8 @@ def data_preparation_run(data_obj):
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column)
+                    time_column = st.selectbox("Select a time column:", columns_list)
+                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     df_bfill = interpolation_all.int_df_bfill() 
                     
                 with cc2:
@@ -496,7 +499,7 @@ def data_preparation_run(data_obj):
                    interpolation_subplot(current_df, df_bfill, selected_column, 'Backward Fill')
                 
                 if st.button("Save Backward Fill results"):
-                    current_df = df_bfill.reset_index(drop=True)
+                    current_df = df_bfill.reset_index()
                     current_df.to_csv("backward_data.csv", index=False)                                                
     with col2:
         st.subheader('Current dataframe')
@@ -521,16 +524,16 @@ def data_preparation_run(data_obj):
             st.dataframe(moving_ave.reset_index(drop=True))
             st.write(moving_ave.shape)
         if dp_method == 'Interpolation' and  interpolation_radio == 'Linear':
-            st.dataframe(linear_df.reset_index(drop=True))
+            st.dataframe(linear_df.reset_index())
             st.write(linear_df.shape)
         if dp_method == 'Interpolation' and  interpolation_radio == 'Cubic':
-            st.dataframe(Cubic_df.reset_index(drop=True))
+            st.dataframe(Cubic_df.reset_index())
             st.write(Cubic_df.shape)
         if dp_method == 'Interpolation' and  interpolation_radio == 'Forward Fill':
-            st.dataframe(df_ffill.reset_index(drop=True))
+            st.dataframe(df_ffill.reset_index())
             st.write(df_ffill.shape)
         if dp_method == 'Interpolation' and  interpolation_radio == 'Backward Fill':
-            st.dataframe(df_bfill.reset_index(drop=True))
+            st.dataframe(df_bfill.reset_index())
             st.write(df_bfill.shape)          
                        
             
