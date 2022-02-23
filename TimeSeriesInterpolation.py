@@ -10,6 +10,14 @@ import streamlit as st
 #defining class "TimeSeriesOOP"
 class TimeSeriesOOP:
     def __init__(self, current_df, selected_column, time_column):
+        if current_df[time_column].dtype == 'DateTime':
+            try:
+              current_df=current_df.set_index("{}".format(time_column))
+              self.df = current_df
+              self.process_dataframe()
+            except Notdatimecolumn as err:
+              st.write('Please choose a different column', err)
+              pass
         current_df=current_df.set_index("{}".format(time_column))
         self.df = current_df
         self.process_dataframe()
