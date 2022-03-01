@@ -14,12 +14,18 @@ def interpolation_subplot(initdf, dataframe, column, method):
     plt.rcParams.update({'xtick.bottom': False})
     #fig, axes = plt.subplots(1, 1, sharex=True, figsize=(20, 20))
     fig = plt.figure(figsize=(10, 4))
-    if method=='cubic_fill' or method=='linear_fill':
+    if  method=='linear_fill':
         #initdf[column].plot(title='Actual', ax=axes[0], label='Actual', color='green', style=".-")
-        dataframe[method].plot(title="{} (MSE: ".format(method) + str(error) + ")",  label='{}'.format(method),
+        dataframe[column].plot(title="{} (MSE: ".format(method) + str(error) + ")",  label='{}'.format(method),
                                   color='deeppink',
                                    style=".-")
-        st.pyplot(fig)                                                  
+        st.pyplot(fig)   
+    elif method=='cubic_fill':
+        #initdf[column].plot(title='Actual', ax=axes[0], label='Actual', color='green', style=".-")
+        dataframe[column].plot(title="{} (MSE: ".format(method) + str(error) + ")",  label='{}'.format(method),
+                                  color='deeppink',
+                                   style=".-")
+        st.pyplot(fig)                                                    
     else:
         #initdf[column].plot(title='Actual', ax=axes[0],  label='Actual', color='green', style=".-")
         dataframe[column].plot(title="{} (MSE: ".format(method) + str(error) + ")", label='{}'.format(method),
@@ -331,49 +337,50 @@ def data_preparation_run(data_obj):
 
     if dp_method == 'Interpolation':
         interpolation_radio = st.radio(label = 'Interpolation',
-                             options = ['Linear','Cubic', 'Forward Fill', 'Backward Fill','All'])
-        if interpolation_radio == 'All':
+                             options = ['Linear','Cubic', 'Forward Fill', 'Backward Fill'])
+        # if interpolation_radio == 'All':
             
-            with st.container():
-                st.subheader('All interpolations')
+        #     with st.container():
+        #         st.subheader('All interpolations')
 
-                cc1, cc2, cc3 = st.columns(3)
-                with cc1:
-                    columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
-                    selected_column = st.selectbox("Select an interested column:", columns_list)
-                    time_column = st.selectbox("Select a time column:", columns_list)
-                    interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
+        #         cc1, cc2, cc3 = st.columns(3)
+        #         with cc1:
+        #             columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+        #             columns_list1 = list(current_df.select_dtypes(include=['datetime']).columns)
+        #             selected_column = st.selectbox("Select a column:", columns_list)
+        #             time_column = st.selectbox("Select a time column:", columns_list1)
+        #             interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     
-                with cc2:
-                    st.write(" ")
-                    st.write(" ")
-                    plot_basic = st.button('Plot')
-                    #bp = st.button("Boxplot")
-                    #hist = st.button("Histogram")
-                # with cc3:
-                #     st.write(" ")
-                #     st.write(" ")
-                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+        #         with cc2:
+        #             st.write(" ")
+        #             st.write(" ")
+        #             plot_basic = st.button('Plot')
+        #             #bp = st.button("Boxplot")
+        #             #hist = st.button("Histogram")
+        #         # with cc3:
+        #         #     st.write(" ")
+        #         #     st.write(" ")
+        #         #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
                 
-                if plot_basic:
-                    interpolation_all.draw_all(selected_column) 
-                    #doubleLinePlot(data_obj.df, interpolation_all.draw_all(selected_column), selected_column)
-                    # st.dataframe(median_filt)
-                    # st.write(data_obj.df[selected_column].value_counts(ascending=False))
-                    # st.write(median_filt[selected_column].value_counts(ascending=False))
-                    #st.write("Blah")
-                    # l = {'col1': medfilt(data_obj.df[selected_column], filter_len)}
-                    # lf = pd.DataFrame(data=l)
-                    # st.write(lf.value_counts(ascending=False))
+        #         if plot_basic:
+        #             interpolation_all.draw_all(selected_column) 
+        #             #doubleLinePlot(data_obj.df, interpolation_all.draw_all(selected_column), selected_column)
+        #             # st.dataframe(median_filt)
+        #             # st.write(data_obj.df[selected_column].value_counts(ascending=False))
+        #             # st.write(median_filt[selected_column].value_counts(ascending=False))
+        #             #st.write("Blah")
+        #             # l = {'col1': medfilt(data_obj.df[selected_column], filter_len)}
+        #             # lf = pd.DataFrame(data=l)
+        #             # st.write(lf.value_counts(ascending=False))
 
 
-                #if bp:
-                    #DoubleBoxPlot(data_obj.df, interpolation_all.draw_all().reset_index(drop=True), selected_column)
+        #         #if bp:
+        #             #DoubleBoxPlot(data_obj.df, interpolation_all.draw_all().reset_index(drop=True), selected_column)
 
-                #if hist:
-                    #Histogram(interpolation_all.draw_all().reset_index(drop=True), selected_column)
+        #         #if hist:
+        #             #Histogram(interpolation_all.draw_all().reset_index(drop=True), selected_column)
 
-                #current_df = rm_outlier.reset_index(drop=True)
+        #         #current_df = rm_outlier.reset_index(drop=True)
     
         if interpolation_radio == 'Linear':
             
@@ -383,8 +390,9 @@ def data_preparation_run(data_obj):
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    columns_list1 = list(current_df.select_dtypes(include=['datetime']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    time_column = st.selectbox("Select a time column:", columns_list)
+                    time_column = st.selectbox("Select a time column:", columns_list1)
                     interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     linear_df = interpolation_all.make_interpolation_liner(selected_column) 
                     
@@ -394,10 +402,10 @@ def data_preparation_run(data_obj):
                     plot_basic = st.button('Plot')
                     #bp = st.button("Boxplot")
                     #hist = st.button("Histogram")
-                # with cc3:
-                #     st.write(" ")
-                #     st.write(" ")
-                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                with cc3:
+                   st.write(" ")
+                   st.write(" ")
+                   st.warning(f'If applied, {current_df.shape[0]-linear_df.shape[0]} rows will be removed.')
                 
                 if plot_basic:
                    interpolation_subplot(current_df, linear_df, selected_column, 'linear_fill')
@@ -414,8 +422,9 @@ def data_preparation_run(data_obj):
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    columns_list1 = list(current_df.select_dtypes(include=['datetime']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    time_column = st.selectbox("Select a time column:", columns_list)
+                    time_column = st.selectbox("Select a time column:", columns_list1)
                     interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     Cubic_df = interpolation_all.make_interpolation_cubic(selected_column) 
                     
@@ -423,18 +432,15 @@ def data_preparation_run(data_obj):
                     st.write(" ")
                     st.write(" ")
                     plot_basic = st.button('Plot')
-                    #bp = st.button("Boxplot")
-                    #hist = st.button("Histogram")
-                # with cc3:
-                #     st.write(" ")
-                #     st.write(" ")
-                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+                
+                with cc3:
+                     st.write(" ")
+                     st.write(" ")
+                     st.warning(f'If applied, {current_df.shape[0]-Cubic_df.shape[0]} rows will be removed.')
                 
                 if plot_basic: 
                    interpolation_subplot(current_df, Cubic_df, selected_column, 'cubic_fill')
-                #    linePlot_Out_recogn(current_df, selected_column)  
-                #    linePlot_Out_recogn(Cubic_df, selected_column)
-                
+    
                 if st.button("Save cubic results"):
                     current_df = Cubic_df.reset_index()
                     current_df.to_csv("Cubic_data.csv", index=False)   
@@ -447,8 +453,9 @@ def data_preparation_run(data_obj):
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    columns_list1 = list(current_df.select_dtypes(include=['datetime']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    time_column = st.selectbox("Select a time column:", columns_list)
+                    time_column = st.selectbox("Select a time column:", columns_list1)
                     interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     df_ffill = interpolation_all.int_df_ffill() 
                     
@@ -456,12 +463,11 @@ def data_preparation_run(data_obj):
                     st.write(" ")
                     st.write(" ")
                     plot_basic = st.button('Plot')
-                    #bp = st.button("Boxplot")
-                    #hist = st.button("Histogram")
-                # with cc3:
-                #     st.write(" ")
-                #     st.write(" ")
-                #     st.warning(f'If applied, {current_df.shape[0]-median_filt.shape[0]} rows will be removed.')
+              
+                with cc3:
+                    st.write(" ")
+                    st.write(" ")
+                    st.warning(f'If applied, {current_df.shape[0]-df_ffill.shape[0]} rows will be removed.')
                 
                 if plot_basic:
                    interpolation_subplot(current_df, df_ffill, selected_column, 'Forward Fill')
@@ -478,8 +484,9 @@ def data_preparation_run(data_obj):
                 cc1, cc2, cc3 = st.columns(3)
                 with cc1:
                     columns_list = list(current_df.select_dtypes(exclude=['object']).columns)
+                    columns_list1 = list(current_df.select_dtypes(include=['datetime']).columns)
                     selected_column = st.selectbox("Select a column:", columns_list)
-                    time_column = st.selectbox("Select a time column:", columns_list)
+                    time_column = st.selectbox("Select a time column:", columns_list1)
                     interpolation_all = TimeSeriesOOP(current_df, selected_column, time_column)
                     df_bfill = interpolation_all.int_df_bfill() 
                     
