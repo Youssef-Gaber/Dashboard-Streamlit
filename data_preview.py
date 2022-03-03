@@ -13,6 +13,7 @@ def data_preview_run(data_obj):
     st.header("DATA PREVIEW")
     col1, col2 = st.columns(2)
     col3, col4 = st.columns(2)
+    st.write(dsdfs)
     
     with col1:
         st.subheader("Original dataframe")
